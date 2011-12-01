@@ -28,21 +28,16 @@ class FPWebApp < Sinatra::Base
 		redirect "/game.html?level=#{name}.xml"
 	end
 	
-	# post '/Levels/*.xml' do |name|
-	# 		File.open(File.dirname(__FILE__) + "/public/Levels/#{name}.xml", 'w') { |f| f.write request.body.read }		
-	# 	end
-	# 	
-	# 	post '/Screenshots/*.xml' do |name|
-	# 		
-	# 		str = request.body.read
-	# 		
-	# 		imageHeader = "data:image/png;base64," 
-	# 		
-	# 		str = str[imageHeader.length..str.length]
-	# 		
-	# 		decoded = Base64.decode64(str)
-	# 		
-	# 		File.open(File.dirname(__FILE__) + "/public/Screenshots/#{name}.png", 'w') { |f| f.write decoded }
-	# 	end
+	post '/Levels/*.xml' do |name|
+		# File.open(File.dirname(__FILE__) + "/public/Levels/#{name}.xml", 'w') { |f| f.write request.body.read }		
+	end
+	
+	post '/Screenshots/*.xml' do |name|
+		# str = request.body.read
+		# imageHeader = "data:image/png;base64," 
+		# str = str[imageHeader.length..str.length]
+		# decoded = Base64.decode64(str)
+		# File.open(File.dirname(__FILE__) + "/public/Screenshots/#{name}.png", 'w') { |f| f.write decoded }
+	end
 
 end
