@@ -1,2 +1,2 @@
-require 'FPWebApp'
+require './FPWebApp'
 run FPWebApp
