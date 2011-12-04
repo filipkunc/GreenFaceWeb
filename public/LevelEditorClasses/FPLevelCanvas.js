@@ -34,6 +34,7 @@ function levelMouseDown(e)
         var beforeLength = levelCanvas.levelObjects.length;
         paletteCanvas.activeFactory.create(levelCanvas.levelObjects, cursor.x, cursor.y);
         levelCanvas.draggedObject = levelCanvas.levelObjects[beforeLength];
+        levelCanvas.draggedObject.selected = true;
         levelCanvas.draw();
     }
     else if (levelCanvas.currentHandle == FPDragHandleNone)
@@ -44,9 +45,11 @@ function levelMouseDown(e)
             levelCanvas.selectionStart = new FPPoint(cursor.x, cursor.y);
             levelCanvas.selectionEnd = new FPPoint(cursor.x, cursor.y);
         }
-        else if (!levelCanvas.draggedObject.selected)
+        else
         {
-            levelCanvas.deselectAll();
+            if (!levelCanvas.draggedObject.selected)
+                levelCanvas.deselectAll();
+            levelCanvas.draggedObject.selected = true;
         }
     }
     
@@ -231,7 +234,7 @@ function FPLevelCanvas(canvasName)
             var levelObject = this.levelObjects[i];
             levelObject.draw(this.context);
             
-            if (levelObject.selected || levelObject == this.draggedObject)
+            if (levelObject.selected)
             {
                 var levelObjectRect = levelObject.rect();
                 this.context.strokeStyle = "rgba(255,255,255, 1.0)";
@@ -296,7 +299,7 @@ function FPLevelCanvas(canvasName)
         for (i in this.levelObjects)
         {
             var levelObject = this.levelObjects[i];
-            if (levelObject.selected || levelObject == this.draggedObject)
+            if (levelObject.selected)
                 levelObject.move(offsetX, offsetY);
         }        
     }
@@ -312,7 +315,7 @@ function FPLevelCanvas(canvasName)
     
     this.deleteSelected = function()
     {
-        this.levelObjects = this.levelObjects.filter(function (obj) { return !obj.selected && obj != this.draggedObject; });
+        this.levelObjects = this.levelObjects.filter(function (obj) { return !obj.selected; });
         this.draw();
     }
     
