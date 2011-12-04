@@ -1,2 +1,2 @@
 require './FPWebApp'
-run FPWebApp
+run FPWebApp.new

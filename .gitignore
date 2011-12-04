@@ -23,3 +23,6 @@ obj
 
 # windows noise
 Thumbs.db
+
+# sqlite
+levels.db

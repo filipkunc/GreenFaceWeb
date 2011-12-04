@@ -1,20 +1,17 @@
 require 'sinatra'
 require 'json'
 require 'base64'
+require 'sequel'
 
 class FPWebApp < Sinatra::Base
   set :root, File.dirname(__FILE__)
 
-  get '/' do
-		@levels = []
-	
-		dir = Dir.new(File.dirname(__FILE__) + "/public/Levels");
-		dir.each do |entry|
-      if File.extname(entry) == '.xml'
-				@levels << File.basename(entry, '.xml')
-      end
-		end
+	before do
+		@DB = Sequel.connect(ENV['DATABASE_URL'] || 'sqlite://db/levels.db')
+	end
 
+  get '/' do
+		@levels = @DB[:levels].order(:id)
     erb :home
   end
 
@@ -27,16 +24,23 @@ class FPWebApp < Sinatra::Base
 		redirect "/game.html?level=#{name}.xml"
 	end
 	
-	post '/Levels/*.xml' do |name|
-		# File.open(File.dirname(__FILE__) + "/public/Levels/#{name}.xml", 'w') { |f| f.write request.body.read }		
+	get '/Levels/*.xml' do |name|
+		headers "Content-Type" => "text/xml; charset=utf8"
+		level = @DB[:levels][:title => name]
+		return level[:data]
 	end
 	
-	post '/Screenshots/*.xml' do |name|
-		# str = request.body.read
-		# imageHeader = "data:image/png;base64," 
-		# str = str[imageHeader.length..str.length]
-		# decoded = Base64.decode64(str)
-		# File.open(File.dirname(__FILE__) + "/public/Screenshots/#{name}.png", 'w') { |f| f.write decoded }
+	post '/Levels/*.xml' do |name|
+		data = request.body.read
+		level = @DB[:levels][:title => name]
+		if level != nil
+			@DB[:levels].filter(:id => level[:id]).update(:data => data)
+		else
+			@DB[:levels].insert(:title => name, :data => data)
+		end
+		
+		# File.open(File.dirname(__FILE__) + "/public/Levels/#{name}.xml", 'w') { |f| f.write request.body.read }		
 	end
 
 end
+

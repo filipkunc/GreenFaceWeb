@@ -132,20 +132,11 @@ function init()
 	loadLevel("Levels/" + qsParm['level']);	
 }
 
-var screenSaved = false;
-
 function draw()
 {
     game.update();
 	context.fillRect(0, 0, canvas.width, canvas.height);
     game.draw(context);
-    
-    if (!screenSaved)
-    {
-        screenSaved = true;
-        xhr.open("POST","Screenshots/" + qsParm['level'], true);
-        xhr.send(canvas.toDataURL("image/png"));
-    }
 }
 
 function keyDown(event)

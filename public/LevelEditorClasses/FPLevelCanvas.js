@@ -222,6 +222,10 @@ function FPLevelCanvas(canvasName)
         
         this.drawGrid();
         
+        this.context.fillStyle = "rgba(255,255,255, 1.0)";
+        this.context.font = "14px Helvetica, Arial";
+        this.context.fillText("Press enter to play and save level", 10, 20);
+        
         for (i in this.levelObjects)
         {
             var levelObject = this.levelObjects[i];
