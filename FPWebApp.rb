@@ -2,6 +2,7 @@ require 'sinatra'
 require 'json'
 require 'base64'
 require 'sequel'
+require 'builder'
 
 class FPWebApp < Sinatra::Base
   set :root, File.dirname(__FILE__)
@@ -15,6 +16,22 @@ class FPWebApp < Sinatra::Base
     erb :home
   end
 
+	get '/levels.xml' do
+		@levels = @DB[:levels].order(:id)
+		
+		builder do |xml|
+	    xml.instruct! :xml, :version => '1.0'
+	    xml.levels do
+		      @levels.each do |level|
+          xml.level do
+						xml.id level[:id]
+            xml.title level[:title]
+          end
+        end
+	    end
+	  end
+	end
+	
 	get '/leveleditor' do
 		levelParam = params["level"]
 		redirect "/leveleditor.html?level=#{levelParam}.xml"
