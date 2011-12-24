@@ -97,7 +97,15 @@ function loadLevel(levelName)
             else if (x[i].nodeName == 'FPMagnet')
             {
                 levelCanvas.levelObjects.push(new FPMagnet(posX, posY, widthSegments));
-            }          
+            }
+            else if (x[i].nodeName == 'GFSoldier')
+            {
+                levelCanvas.levelObjects.push(new GFSoldier(posX, posY));
+            }       
+            else if (x[i].nodeName == 'FPSpeedPowerUp')
+            {
+                levelCanvas.levelObjects.push(new FPSpeedPowerUp(posX, posY));
+            }
         }
     }
 }

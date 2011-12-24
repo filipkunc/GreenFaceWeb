@@ -56,12 +56,13 @@ function FPPaletteCanvas(canvasName)
     this.activeFactory = null;
     
     this.objectPalette.push(new FPPlayerFactory());
+    this.objectPalette.push(new GFSoldierFactory());
     this.objectPalette.push(new FPPlatformFactory());
     this.objectPalette.push(new FPMovablePlatformFactory());
     this.objectPalette.push(new FPElevatorFactory());
     this.objectPalette.push(new FPDiamondFactory());
     this.objectPalette.push(new FPMagnetFactory());
-    //this.objectPalette.push(new FPSpeedPowerUpFactory());
+    this.objectPalette.push(new FPSpeedPowerUpFactory());
     this.objectPalette.push(new FPTrampolineFactory());
     this.objectPalette.push(new FPExitFactory());
     

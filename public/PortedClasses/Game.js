@@ -90,7 +90,15 @@ function dataReceived(e)
                 else if (x[i].nodeName == 'FPMagnet')
                 {
                     game.addGameObject(new FPMagnet(posX, posY, widthSegments));
-                }          
+                }
+                else if (x[i].nodeName == 'GFSoldier')
+                {
+                    game.addGameObject(new GFSoldier(posX, posY));
+                }
+                else if (x[i].nodeName == 'FPSpeedPowerUp')
+                {
+                    game.addGameObject(new FPSpeedPowerUp(posX, posY));
+                }       
             }
         }
 

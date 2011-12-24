@@ -49,7 +49,7 @@ function FPDiamond(x, y)
         var intersection = FPRectIntersection(game.player.rect(), this.rect());
         if (!intersection.isEmpty())
         {
-            game.diamondsPicked++;
+            game.player.lives++;
         	this.isVisible = false;
     	}
     }

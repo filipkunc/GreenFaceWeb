@@ -16,6 +16,14 @@ jumpImage[0].src = "Images/WJ_01.png";
 jumpImage[1] = new Image();
 jumpImage[1].src = "Images/WJ_02.png";
 
+var playerDeathImage = new Array();
+playerDeathImage[0] = new Image();
+playerDeathImage[0].src = "Images/WD_01.png";
+playerDeathImage[1] = new Image();
+playerDeathImage[1].src = "Images/WD_02.png";
+playerDeathImage[2] = new Image();
+playerDeathImage[2].src = "Images/WD_03.png";
+
 var speedImage = new Image();
 speedImage.src = "Images/speed.png";
 
@@ -30,6 +38,7 @@ const changeDirectionSpeed = 3.0;
 const maxSpeedUpCount = 60 * 6; // 60 FPS * 6 sec
 const mathPi = 3.1415926535;
 const playerSize = 64.0;
+const maxDamageCounter = 7;
 
 function FPPlayerFactory()
 {
@@ -59,6 +68,9 @@ function FPPlayer()
     this.animationCounter = 0;
     this.leftOriented = false;
     this.selected = false;
+    this.lives = 5;
+    this.damageCounter = 0;
+    this.deathCounter = 0;
     
     this.rect = function()
     {
@@ -71,8 +83,27 @@ function FPPlayer()
         this.y += offsetY;
     }
     
+    this.falling = function()
+    {
+        return this.moveY < 0.0 && this.jumping;
+    }        
+    
     this.update = function(game)
     {
+        if (this.lives <= 0)
+        {
+            this.animationCounter++;
+
+            if (this.animationCounter > 10)
+            {
+                if (++this.deathCounter >= 3)
+                    this.deathCounter = 1;
+                this.animationCounter = 0;
+            }
+
+            return;
+        }
+        
         var inputAcceleration = game.inputAcceleration;
     	var moveLeftOrRight = false;
     	
@@ -90,7 +121,7 @@ function FPPlayer()
     	{
     		if (this.moveX < 0.0)
     			this.moveX += Math.abs(inputAcceleration.x) * acceleration * changeDirectionSpeed;
-    		if (this.moveX < maxSpeed)
+    		if (this.moveX < currentMaxSpeed)
     			this.moveX += Math.abs(inputAcceleration.x) * acceleration;
     		moveLeftOrRight = true;
     		this.leftOriented = true;
@@ -99,7 +130,7 @@ function FPPlayer()
     	{
     		if (this.moveX > 0.0)
     			this.moveX -= Math.abs(inputAcceleration.x) * acceleration * changeDirectionSpeed;
-    		if (this.moveX > -maxSpeed)
+    		if (this.moveX > -currentMaxSpeed)
     			this.moveX -= Math.abs(inputAcceleration.x) * acceleration;
     		moveLeftOrRight = true;
     		this.leftOriented = false;
@@ -279,6 +310,23 @@ function FPPlayer()
     	return isColliding;
     }    
     
+    this.hit = function()
+    {
+        if (this.lives <= 0)
+            return;
+
+        if (this.damageCounter == 0)
+        {
+            this.damageCounter = maxDamageCounter;
+            if (--this.lives <= 0)
+            {
+                this.animationCounter = 0;
+                this.deathCounter = 0;
+            }
+        }
+    }
+    
+    
     this.draw = function(context)
     {
         context.save();
@@ -291,14 +339,26 @@ function FPPlayer()
         else
         {
             context.translate(this.x, this.y);
-        }
-        
-        if (this.jumping)
+        }        
+
+        if (this.lives <= 0)
+            context.drawImage(playerDeathImage[this.deathCounter], 0, 0);
+        else if (this.jumping)
             context.drawImage(jumpImage[this.jumpCounter], 0, 0);
         else
             context.drawImage(playerImage[this.moveCounter], 0, 0);
         
         context.restore();
+        
+        if (this.damageCounter > 0)
+        {
+            var c = this.damageCounter / maxDamageCounter;
+            c = Math.max(1.0 - c, 0.2); 
+            context.fillStyle = "rgba(255, 0, 0, " + c.toString() + ")";
+            //context.fillStyle = "rgba(255, 0, 0, " + c.toString() + ")";
+            context.fillRect(0, 0, 480, 320);
+            this.damageCounter--;
+        }        
         
         if (this.speedUpCounter > 0)
             this.drawSpeedUp(context);
@@ -306,8 +366,8 @@ function FPPlayer()
     
     this.drawSpeedUp = function(context)
     {
-        context.globalAlpha = Math.abs(Math.sin(this.alpha)) * 0.5 + 0.5;
-        context.drawImage(jumpImage, 240 - playerSize, 160 - playerSize);
+        context.globalAlpha = Math.abs(Math.sin(this.alpha)) * 0.3 + 0.1;
+        context.drawImage(speedImage, this.x - playerSize / 2.0, this.y - playerSize / 2.0);
         context.globalAlpha = 1.0;
     }
     

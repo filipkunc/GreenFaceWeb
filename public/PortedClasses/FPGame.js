@@ -26,16 +26,9 @@ function FPGame()
     this.backgroundOffsetX = 0.0;
     this.backgroundOffsetY = 0.0;
     
-    this.diamondsCount = 0;
-    this.diamondsPicked = 0;
-    
     this.addGameObject = function(gameObject)
     {
         this.gameObjects.push(gameObject);
-        if (gameObject instanceof FPDiamond)
-        {
-            this.diamondsCount++;
-        }
     }
     
     this.update = function()
@@ -52,14 +45,8 @@ function FPGame()
     {
         var offsetX = (this.backgroundOffsetX % 32.0) - 32.0;
         var offsetY = (this.backgroundOffsetY % 32.0) - 32.0;
-        
-        for (y = 0; y < this.height + 64; y += 32)
-        {
-            for (x = 0; x < this.width + 64; x += 32)
-            {
-                context.drawImage(backgroundImage, x + offsetX, y + offsetY);
-            }
-        }
+                        
+        context.drawImage(backgroundImage, offsetX, offsetY);
         
         for (i in this.gameObjects)
         {
@@ -71,9 +58,16 @@ function FPGame()
         
         context.fillStyle = "white";
         context.font = "22px Helvetica Neue";
-        context.fillText("Diamonds: " + this.diamondsPicked.toString() + "/" + this.diamondsCount.toString(), 5.0, 20.0);
-        //context.fillText("GameObjects: " + this.gameObjects.length.toString(), 5.0, 20.0);
+        context.fillText("Lives: " + this.player.lives.toString(), 5.0, 20.0);
         context.fillStyle = "black";
+        
+        if (this.player.speedUpCounter > 0)
+        {
+            var speedTime = (maxSpeedUpCount - this.player.speedUpCounter) / 60.0;            
+            context.fillStyle = "rgba(128, 255, 255, 0.8)";
+            context.fillText(speedTime.toFixed(1), 440.0, 310.0);
+            context.fillStyle = "black";
+        }
     }
     
     this.moveWorld = function(offsetX, offsetY)
